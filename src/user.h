@@ -22,7 +22,6 @@ public:
 
     // setters
     inline void SetName(string name) { name_ = name; }
-    inline void SetPublicKey(string public_key) { public_key_ = public_key; }
     // getters
     inline string GetName() const { return name_; }
     inline string GetPublicKey() { return public_key_; }
