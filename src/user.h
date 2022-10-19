@@ -20,8 +20,6 @@ public:
         balance_ = balance;
     }
 
-    // setters
-    inline void SetName(string name) { name_ = name; }
     // getters
     inline string GetName() const { return name_; }
     inline string GetPublicKey() { return public_key_; }
