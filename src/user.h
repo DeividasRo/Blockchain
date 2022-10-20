@@ -7,8 +7,8 @@ class User
 {
 private:
     string name_;
-    int balance_;
     string public_key_;
+    int balance_;
 
 public:
     User() : name_(""), public_key_(""), balance_(0) {}
