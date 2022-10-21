@@ -1,27 +1,28 @@
 #pragma once
 #include <string>
+#include <iostream>
 
 using std::string;
 
 class User
 {
 private:
-    string name_;
-    string public_key_;
-    int balance_;
+    string name;
+    string public_key;
+    int balance;
 
 public:
-    User() : name_(""), public_key_(""), balance_(0) {}
+    User() : name(""), public_key(""), balance(0) {}
 
     User(string name, string public_key, int balance)
     {
-        name_ = name;
-        public_key_ = public_key;
-        balance_ = balance;
+        this->name = name;
+        this->public_key = public_key;
+        this->balance = balance;
     }
 
     // getters
-    inline string GetName() const { return name_; }
-    inline string GetPublicKey() { return public_key_; }
-    inline int GetBalance() const { return balance_; }
+    inline string GetName() const { return name; }
+    inline string GetPublicKey() { return public_key; }
+    inline int GetBalance() const { return balance; }
 };

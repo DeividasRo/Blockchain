@@ -35,7 +35,7 @@ int main()
     GenerateUsers(users, 1000);
     GenerateTransactions(transactions, users, 10000);
     // PrintAllUsers(users);
-    // PrintTransactionInfo(transactions[0]);
-    // PrintUserInfo(users[2]);
+    PrintTransactionInfo(transactions[0]);
+    PrintUserInfo(users[99]);
     return 0;
 }
