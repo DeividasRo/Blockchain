@@ -11,7 +11,7 @@ void PrintAllUsers(std::vector<User> users)
 {
     for (int i = 0; i < users.size(); i++)
     {
-        std::cout << users[i].GetName() << " " << users[i].GetPublicKey() << " " << users[i].GetBalance() << std::endl;
+        std::cout << users[i].GetName() << " " << users[i].GetPublicKey() << " " << users[i].GetBalance() << " " << users[i].GetTotalRequestedSendValue() << std::endl;
     }
 }
 
@@ -59,9 +59,9 @@ void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transacti
     for (int i = 0; i < 100; i++)
     {
         int transaction_idx = GenerateIntValue(0, transactions.size());
-        block_transactions.push_back(transactions[transaction_idx]);
+        block_transactions.push_back(transactions.front());
         transaction_ids += transactions[transaction_idx].GetTransactionId();
-        transactions.erase(transactions.begin() + transaction_idx);
+        transactions.erase(transactions.begin());
         if (transactions.size() == 0)
             break;
     }
@@ -89,19 +89,22 @@ void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transacti
         current_block_hash = Hash(block_data + IntToHexString(nonce));
     }
 
-    PrintAllUsers(users);
     // Complete transactions
     for (int i = 0; i < block_transactions.size(); i++)
     {
-        auto receiver = std::find_if(std::begin(users), std::end(users),
-                                     [&](User const &u)
-                                     { return u.GetPublicKey() == block_transactions[i].GetReceiverKey(); });
+
         auto sender = std::find_if(std::begin(users), std::end(users),
                                    [&](User const &u)
                                    { return u.GetPublicKey() == block_transactions[i].GetSenderKey(); });
+
+        auto receiver = std::find_if(std::begin(users), std::end(users),
+                                     [&](User const &u)
+                                     { return u.GetPublicKey() == block_transactions[i].GetReceiverKey(); });
         receiver->UpdateBalance(block_transactions[i].GetValue());
         sender->UpdateBalance(-block_transactions[i].GetValue());
+        sender->UpdateTotalRequestedSendValue(-block_transactions[i].GetValue());
     }
+
     PrintAllUsers(users);
 
     // Construct a new block
@@ -118,8 +121,9 @@ int main()
     std::vector<Transaction> transactions;
     std::vector<Block> blocks;
     int difficulty = 4;
-    GenerateUsers(users, 10);
-    GenerateTransactions(transactions, users, 1000);
+    GenerateUsers(users, 100);
+    GenerateTransactions(transactions, users, 10000);
+    std::cout << transactions.size() << std::endl;
     // PrintAllUsers(users);
     // PrintTransactionInfo(transactions[0]);
     // PrintUserInfo(users[0]);
