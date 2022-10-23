@@ -21,8 +21,10 @@ public:
         this->balance = balance;
     }
 
+    inline void UpdateBalance(int value) { this->balance += value; }
+
     // getters
     inline string GetName() const { return name; }
-    inline string GetPublicKey() { return public_key; }
+    inline string GetPublicKey() const { return public_key; }
     inline int GetBalance() const { return balance; }
 };

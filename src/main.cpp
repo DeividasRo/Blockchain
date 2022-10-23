@@ -5,6 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <iomanip>
+#include <algorithm>
 
 void PrintAllUsers(std::vector<User> users)
 {
@@ -50,7 +51,7 @@ string IntToHexString(unsigned int value)
     return stream.str();
 }
 
-void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transactions, int difficulty_target, int version = 1)
+void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transactions, std::vector<User> &users, int difficulty_target, int version = 1)
 {
     // Randomly select 100 transactions from transaction pool
     std::vector<Transaction> block_transactions;
@@ -58,9 +59,11 @@ void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transacti
     for (int i = 0; i < 100; i++)
     {
         int transaction_idx = GenerateIntValue(0, transactions.size());
-        transactions.erase(transactions.begin() + transaction_idx);
         block_transactions.push_back(transactions[transaction_idx]);
         transaction_ids += transactions[transaction_idx].GetTransactionId();
+        transactions.erase(transactions.begin() + transaction_idx);
+        if (transactions.size() == 0)
+            break;
     }
     transactions.shrink_to_fit();
 
@@ -73,20 +76,39 @@ void CreateBlock(std::vector<Block> &blocks, std::vector<Transaction> &transacti
     else
         previous_block_hash.assign(64, '0');
 
-    string block_data = IntToHexString(version) + previous_block_hash + merkle_hash + IntToHexString(timestamp) + IntToHexString(timestamp);
+    string block_data = IntToHexString(version) + previous_block_hash + merkle_hash + IntToHexString(timestamp) + IntToHexString(difficulty_target);
 
     string target_substr(difficulty_target, '0');
     string current_block_hash;
     unsigned int nonce = -1;
 
+    // Mining
     while (current_block_hash.substr(0, difficulty_target) != target_substr)
     {
         nonce++;
         current_block_hash = Hash(block_data + IntToHexString(nonce));
     }
-    std::cout << nonce << std::endl;
 
+    PrintAllUsers(users);
+    // Complete transactions
+    for (int i = 0; i < block_transactions.size(); i++)
+    {
+        auto receiver = std::find_if(std::begin(users), std::end(users),
+                                     [&](User const &u)
+                                     { return u.GetPublicKey() == block_transactions[i].GetReceiverKey(); });
+        auto sender = std::find_if(std::begin(users), std::end(users),
+                                   [&](User const &u)
+                                   { return u.GetPublicKey() == block_transactions[i].GetSenderKey(); });
+        receiver->UpdateBalance(block_transactions[i].GetValue());
+        sender->UpdateBalance(-block_transactions[i].GetValue());
+    }
+    PrintAllUsers(users);
+
+    // Construct a new block
     Block block(current_block_hash, previous_block_hash, merkle_hash, timestamp, nonce, difficulty_target, version);
+    block.SetTransactions(block_transactions);
+
+    // And new block to blockchain
     blocks.push_back(block);
 }
 
@@ -95,12 +117,18 @@ int main()
     std::vector<User> users;
     std::vector<Transaction> transactions;
     std::vector<Block> blocks;
-    GenerateUsers(users, 1000);
-    GenerateTransactions(transactions, users, 10000);
+    int difficulty = 4;
+    GenerateUsers(users, 10);
+    GenerateTransactions(transactions, users, 1000);
     // PrintAllUsers(users);
     // PrintTransactionInfo(transactions[0]);
     // PrintUserInfo(users[0]);
-    CreateBlock(blocks, transactions, 4);
-    // PrintBlockInfo(blocks[0]);
+    while (transactions.size() > 0)
+    {
+        CreateBlock(blocks, transactions, users, difficulty);
+        PrintBlockInfo(blocks[blocks.size() - 1]);
+    }
     return 0;
 }
+
+// Difficulty 7 apie 8 minutes

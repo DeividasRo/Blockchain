@@ -30,6 +30,8 @@ public:
         this->version = version;
     }
 
+    // setters
+    inline void SetTransactions(std::vector<Transaction> transactions) { this->transactions = transactions; }
     // getters
     inline string GetCurrentBlockHash() const { return current_block_hash; }
     inline string GetPreviousBlockHash() const { return previous_block_hash; }

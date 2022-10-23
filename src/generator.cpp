@@ -25,7 +25,7 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
     {
         string sender_key = users[GenerateIntValue(0, users.size() - 1)].GetPublicKey();
         string receiver_key = users[GenerateIntValue(0, users.size() - 1)].GetPublicKey();
-        int value = GenerateIntValue(0, 50000);
+        int value = GenerateIntValue(0, 10000);
         string transaction_id = Hash(Hash(sender_key + receiver_key + std::to_string(value)));
         Transaction transaction = Transaction(transaction_id, sender_key, receiver_key, value);
         transactions.push_back(transaction);
