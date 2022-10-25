@@ -36,6 +36,7 @@ void PrintBlockInfo(Block block)
     std::cout << "Timestamp: " << block.GetTimestamp() << std::endl;
     std::cout << "Nonce: " << block.GetNonce() << std::endl;
     std::cout << "Difficulty Target: " << block.GetDifficultyTarget() << std::endl;
+    std::cout << "Transaction Count: " << block.TransactionCount() << std::endl;
     std::cout << "Version: " << block.GetVersion() << std::endl;
     std::cout << "Height: " << block.GetHeight() << std::endl;
 }
@@ -47,14 +48,14 @@ int main()
 
     blockchain.GenerateBlockchainUsers(100);
     std::cout << "Generated " << blockchain.UserCount() << " users." << std::endl;
-    blockchain.GenerateUnverifiedTransactions(10000);
-    std::cout << "Generated " << blockchain.TransactionCount() << " unverified users." << std::endl;
+    blockchain.GenerateTransactionPool(10000);
+    std::cout << "Generated " << blockchain.TransactionPoolCount() << " unverified users." << std::endl;
     // PrintAllUsers(users);
     // PrintTransactionInfo(transactions[0]);
     // PrintUserInfo(users[0]);
 
-    std::cout << "\nCreating blocks for all unverified transactions..." << blockchain.BlockCount() << ":" << std::endl;
-    while (blockchain.TransactionCount() > 0)
+    std::cout << "\nCreating blocks for all unconfirmed transactions..." << blockchain.BlockCount() << ":" << std::endl;
+    while (blockchain.TransactionPoolCount() > 0)
     {
         blockchain.CreateBlock(difficulty);
         PrintBlockInfo(blockchain.GetBlocks()[blockchain.BlockCount() - 1]);

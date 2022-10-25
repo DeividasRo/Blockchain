@@ -14,14 +14,14 @@ void Blockchain::CreateBlock(int difficulty_target, int version)
     string transaction_ids = "";
     for (int i = 0; i < 100; i++)
     {
-        int transaction_idx = GenerateIntValue(0, transactions.size());
-        block_transactions.push_back(transactions.front());
-        transaction_ids += transactions[transaction_idx].GetTransactionId();
-        transactions.erase(transactions.begin());
-        if (transactions.size() == 0)
+        int transaction_idx = GenerateIntValue(0, transaction_pool.size());
+        block_transactions.push_back(transaction_pool.front());
+        transaction_ids += transaction_pool[transaction_idx].GetTransactionId();
+        transaction_pool.erase(transaction_pool.begin() + transaction_idx);
+        if (transaction_pool.size() == 0)
             break;
     }
-    transactions.shrink_to_fit();
+    transaction_pool.shrink_to_fit();
 
     unsigned int timestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 

@@ -18,7 +18,7 @@ class Blockchain
 private:
     string name;
     std::vector<User> users;
-    std::vector<Transaction> transactions;
+    std::vector<Transaction> transaction_pool;
     std::vector<Block> blocks;
 
 public:
@@ -32,15 +32,15 @@ public:
     void CreateBlock(int difficulty_target, int version = 1);
 
     inline void GenerateBlockchainUsers(int amount) { GenerateUsers(users, amount); }
-    inline void GenerateUnverifiedTransactions(int amount) { GenerateTransactions(transactions, users, amount); }
+    inline void GenerateTransactionPool(int amount) { GenerateTransactions(transaction_pool, users, amount); }
 
     inline int UserCount() { return users.size(); }
-    inline int TransactionCount() { return transactions.size(); }
+    inline int TransactionPoolCount() { return transaction_pool.size(); }
     inline int BlockCount() { return blocks.size(); }
 
     // getters
     inline std::vector<User> GetUsers() const { return users; }
-    inline std::vector<Transaction> GetTransactions() const { return transactions; }
+    inline std::vector<Transaction> GetTransactionPool() const { return transaction_pool; }
     inline std::vector<Block> GetBlocks() const { return blocks; }
 };
 

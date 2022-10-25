@@ -32,6 +32,8 @@ public:
         this->version = version;
     }
 
+    inline int TransactionCount() const { return transactions.size(); };
+
     // setters
     inline void SetTransactions(std::vector<Transaction> transactions) { this->transactions = transactions; }
     // getters
