@@ -13,13 +13,14 @@ private:
     unsigned int timestamp;
     unsigned int nonce;
     int difficulty_target;
+    int height;
     int version;
     std::vector<Transaction> transactions;
 
 public:
-    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), version(1) {}
+    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1) {}
 
-    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned int nonce, int difficulty_target, int version)
+    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned int nonce, int difficulty_target, int height, int version)
     {
         this->current_block_hash = current_block_hash;
         this->previous_block_hash = previous_block_hash;
@@ -27,6 +28,7 @@ public:
         this->timestamp = timestamp;
         this->nonce = nonce;
         this->difficulty_target = difficulty_target;
+        this->height = height;
         this->version = version;
     }
 
@@ -39,6 +41,7 @@ public:
     inline unsigned int GetTimestamp() const { return timestamp; }
     inline int GetNonce() const { return nonce; }
     inline int GetDifficultyTarget() const { return difficulty_target; }
-    inline std::vector<Transaction> GetTransactions() const { return transactions; }
+    inline int GetHeight() const { return height; }
     inline int GetVersion() const { return version; }
+    inline std::vector<Transaction> GetTransactions() const { return transactions; }
 };

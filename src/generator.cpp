@@ -29,8 +29,8 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
             continue;
         if (sender->GetBalance() > sender->GetTotalRequestedSendValue() && sender != receiver)
         {
-            // Generate value to send from (1) to (Available Money / 10)
-            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()));
+            // Generate value to send from (1) to (Available Money / 5)
+            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 5);
 
             sender->UpdateTotalRequestedSendValue(value);
 
