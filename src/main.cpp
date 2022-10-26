@@ -1,7 +1,6 @@
 #include "blockchain.h"
 #include <iostream>
 #include <iomanip>
-
 void PrintAllUsers(std::vector<User> users)
 {
     for (int i = 0; i < users.size(); i++)
@@ -45,20 +44,26 @@ int main()
 {
     Blockchain blockchain("MyCoin");
     int difficulty = 4;
-
-    blockchain.GenerateBlockchainUsers(100);
-    std::cout << "Generated " << blockchain.UserCount() << " users." << std::endl;
-    blockchain.GenerateTransactionPool(10000);
-    std::cout << "Generated " << blockchain.TransactionPoolCount() << " unverified users." << std::endl;
-    // PrintAllUsers(users);
-    // PrintTransactionInfo(transactions[0]);
-    // PrintUserInfo(users[0]);
-
-    std::cout << "\nCreating blocks for all unconfirmed transactions..." << blockchain.BlockCount() << ":" << std::endl;
-    while (blockchain.TransactionPoolCount() > 0)
+    string command, arg1;
+    std::cout << "BLOCKCHAIN INSTANTIATED" << std::endl;
+    while (command != "stop")
     {
-        blockchain.CreateBlock(difficulty);
-        PrintBlockInfo(blockchain.GetBlocks()[blockchain.BlockCount() - 1]);
+        std::cin >> command >> arg1;
+        if (command == "genusers" && std::stoi(arg1) > 0)
+        {
+            blockchain.GenerateBlockchainUsers(std::stoi(arg1));
+            std::cout << "Generated " << std::stoi(arg1) << " users." << std::endl;
+            std::cout << "Currently there are " << blockchain.UserCount() << " users." << std::endl;
+        }
+        // blockchain.GenerateTransactionPool(10000);
+        // std::cout << "Generated " << blockchain.TransactionPoolCount() << " unverified users." << std::endl;
+
+        // std::cout << "\nCreating blocks for all unconfirmed transactions..." << blockchain.BlockCount() << ":" << std::endl;
+        // while (blockchain.TransactionPoolCount() > 0)
+        // {
+        //     blockchain.CreateBlock(difficulty);
+        //     PrintBlockInfo(blockchain.GetBlocks()[blockchain.BlockCount() - 1]);
+        // }
     }
     return 0;
 }

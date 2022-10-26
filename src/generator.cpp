@@ -30,7 +30,7 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
         if (sender->GetBalance() > sender->GetTotalRequestedSendValue() && sender != receiver)
         {
             // Generate value to send from (1) to (Available Money / 5)
-            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 5);
+            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 10);
 
             sender->UpdateTotalRequestedSendValue(value);
 
