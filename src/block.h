@@ -46,4 +46,5 @@ public:
     inline int GetHeight() const { return height; }
     inline int GetVersion() const { return version; }
     inline std::vector<Transaction> GetTransactions() const { return transactions; }
+    inline Transaction GetTransaction(int idx) const { return transactions[idx]; }
 };

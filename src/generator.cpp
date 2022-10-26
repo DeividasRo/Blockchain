@@ -13,7 +13,7 @@ void GenerateUsers(std::vector<User> &users, int amount)
 {
     for (int i = 0; i < amount; i++)
     {
-        string user_name = "user" + std::to_string(i + 1);
+        string user_name = "user" + std::to_string(users.size() + 1);
         User user = User(user_name, Hash(user_name), GenerateIntValue(100, 100000));
         users.push_back(user);
     }
@@ -27,10 +27,10 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
         User *receiver = &users[GenerateIntValue(0, users.size() - 1)];
         if (sender->GetTotalRequestedSendValue() >= sender->GetBalance())
             continue;
-        if (sender->GetBalance() > sender->GetTotalRequestedSendValue() && sender != receiver)
+        if (sender != receiver)
         {
-            // Generate value to send from (1) to (Available Money / 5)
-            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 10);
+            // Generate value to send from (1) to (Available Money / 10)
+            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 10 + 1);
 
             sender->UpdateTotalRequestedSendValue(value);
 
@@ -38,6 +38,7 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
 
             // Create new transaction
             Transaction transaction = Transaction(transaction_id, sender->GetPublicKey(), receiver->GetPublicKey(), value);
+
             // Push newly created transaction to transaction pool
             transactions.push_back(transaction);
         }

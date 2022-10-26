@@ -42,6 +42,7 @@ public:
     inline std::vector<User> GetUsers() const { return users; }
     inline std::vector<Transaction> GetTransactionPool() const { return transaction_pool; }
     inline std::vector<Block> GetBlocks() const { return blocks; }
+    inline Block GetBlock(int idx) const { return blocks[idx]; }
 };
 
 string IntToHexString(unsigned int value);

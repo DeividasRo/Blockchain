@@ -24,7 +24,7 @@ public:
     }
     // getters
     inline string GetTransactionId() const { return transaction_id; }
-    inline string GetSenderKey() { return sender_key; }
+    inline string GetSenderKey() const { return sender_key; }
     inline string GetReceiverKey() const { return receiver_key; }
     inline int GetValue() const { return value; }
 };

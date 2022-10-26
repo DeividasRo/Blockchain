@@ -14,8 +14,8 @@ void Blockchain::CreateBlock(int difficulty_target, int version)
     string transaction_ids = "";
     for (int i = 0; i < 100; i++)
     {
-        int transaction_idx = GenerateIntValue(0, transaction_pool.size());
-        block_transactions.push_back(transaction_pool.front());
+        int transaction_idx = GenerateIntValue(0, transaction_pool.size() - 1);
+        block_transactions.push_back(transaction_pool[transaction_idx]);
         transaction_ids += transaction_pool[transaction_idx].GetTransactionId();
         transaction_pool.erase(transaction_pool.begin() + transaction_idx);
         if (transaction_pool.size() == 0)
@@ -62,7 +62,7 @@ void Blockchain::CreateBlock(int difficulty_target, int version)
     }
 
     // Construct a new block
-    Block block(current_block_hash, previous_block_hash, merkle_hash, timestamp, nonce, difficulty_target, BlockCount() + 1, version);
+    Block block(current_block_hash, previous_block_hash, merkle_hash, timestamp, nonce, difficulty_target, BlockCount(), version);
     block.SetTransactions(block_transactions);
 
     // And new block to blockchain
