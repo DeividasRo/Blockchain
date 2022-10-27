@@ -74,13 +74,14 @@ int main()
     string input;
     int argc;
     std::vector<string> args;
+
     std::cout << "BLOCKCHAIN INSTANTIATED" << std::endl;
     do
     {
         std::cout << ">";
         // Get command input
         std::getline(std::cin, input);
-        // To lower case
+        // Input to lower case
         std::for_each(input.begin(), input.end(), [](char &c)
                       { c = ::tolower(c); });
         // Split input into arguments
@@ -101,6 +102,10 @@ int main()
                 std::cout << "Generated " << std::stoi(args[1]) << " new users." << std::endl;
                 std::cout << "Currently there are " << blockchain.UserCount() << " users." << std::endl;
             }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
+            }
         }
         else if (args[0] == "gentransactions")
         {
@@ -110,11 +115,20 @@ int main()
                     continue;
                 if (std::stoi(args[1]) < 1)
                     continue;
+                if (blockchain.UserCount() < 2)
+                {
+                    std::cout << "Not enough users in the blockchain." << std::endl;
+                    continue;
+                }
                 int pre_gen_pool_size = blockchain.TransactionPoolCount();
                 std::cout << "Attempting to generate " << std::stoi(args[1]) << " new transactions..." << std::endl;
                 blockchain.GenerateTransactionPool(std::stoi(args[1]));
                 std::cout << "Generated " << blockchain.TransactionPoolCount() - pre_gen_pool_size << " new transactions in transaction pool." << std::endl;
                 std::cout << "Currently there are " << blockchain.TransactionPoolCount() << " transactions in transaction pool." << std::endl;
+            }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
         else if (args[0] == "createblocks")
@@ -139,12 +153,16 @@ int main()
                 if (!is_number(args[1]))
                     continue;
                 Block block = blockchain.GetBlock(std::stoi(args[1]));
-                if (std::stoi(args[1]) < 0 && std::stoi(args[1]) > blockchain.BlockCount())
+                if (std::stoi(args[1]) < 0 || std::stoi(args[1]) > blockchain.BlockCount())
                     continue;
                 for (int i = 0; i < blockchain.GetBlock(std::stoi(args[1])).TransactionCount(); i++)
                 {
                     PrintTransactionInfo(block.GetTransaction(i));
                 }
+            }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
         else if (args[0] == "getblockinfo")
@@ -153,9 +171,13 @@ int main()
             {
                 if (!is_number(args[1]))
                     continue;
-                if (std::stoi(args[1]) < 0 && std::stoi(args[1]) > blockchain.BlockCount())
+                if (std::stoi(args[1]) < 0 || std::stoi(args[1]) > blockchain.BlockCount() - 1)
                     continue;
                 PrintBlockInfo(blockchain.GetBlock(std::stoi(args[1])));
+            }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
         else if (args[0] == "getuserinfo")
@@ -168,6 +190,10 @@ int main()
                         PrintUserInfo(blockchain.GetUsers()[i]);
                 }
             }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
+            }
         }
         else if (args[0] == "help")
         {
@@ -179,6 +205,10 @@ int main()
             std::cout << "GETBLOCKINFO <block_index> - display information about a specified block." << std::endl;
             std::cout << "GETUSERINFO <user_name>- display information about a specified user." << std::endl;
             std::cout << std::endl;
+        }
+        else
+        {
+            std::cout << "Invalid command." << std::endl;
         }
     } while (args[0] != "stop");
     return 0;

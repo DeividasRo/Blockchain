@@ -21,30 +21,33 @@ void GenerateUsers(std::vector<User> &users, int amount)
 
 void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<User> &users, int amount)
 {
-    for (int i = 0; i < amount; i++)
+    int i = 0;
+    while (i < amount)
     {
         User *sender = &users[GenerateIntValue(0, users.size() - 1)];
+
         User *receiver = &users[GenerateIntValue(0, users.size() - 1)];
+        if (sender == receiver)
+            continue;
         if (sender->GetTotalUnconfirmedSendValue() > sender->GetBalance())
             continue;
-        if (sender != receiver)
-        {
-            // Amount of money that is available to send (Balance - Sent Unconfirmed Amount)
-            unsigned int available_money = sender->GetBalance() - sender->GetTotalUnconfirmedSendValue();
+        // Amount of money that is available to send (Balance - Sent Unconfirmed Amount)
+        unsigned int available_money = sender->GetBalance() - sender->GetTotalUnconfirmedSendValue();
 
-            // Prevents generation of sending value that is bigger than (Available Money / Reducer Value)
-            int reducer_value = (available_money > 3) ? 3 : 1;
-            unsigned int value = GenerateIntValue(0, available_money / reducer_value);
+        // Prevents generation of sending value that is bigger than (Available Money / Reducer Value)
+        int reducer_value = (available_money > 3) ? 3 : 1;
+        unsigned int value = GenerateIntValue(0, available_money / reducer_value);
 
-            sender->UpdateTotalUnconfirmedSendValue(value);
+        sender->UpdateTotalUnconfirmedSendValue(value);
 
-            string transaction_id = Hash(Hash(sender->GetPublicKey() + receiver->GetPublicKey() + std::to_string(value)));
+        string transaction_id = Hash(Hash(sender->GetPublicKey() + receiver->GetPublicKey() + std::to_string(value)));
 
-            // Create new transaction
-            Transaction transaction = Transaction(transaction_id, sender->GetPublicKey(), receiver->GetPublicKey(), value);
+        // Create new transaction
+        Transaction transaction = Transaction(transaction_id, sender->GetPublicKey(), receiver->GetPublicKey(), value);
 
-            // Push newly created transaction to transaction pool
-            transactions.push_back(transaction);
-        }
+        // Push newly created transaction to transaction pool
+        transactions.push_back(transaction);
+
+        i++;
     }
 }
