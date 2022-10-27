@@ -25,14 +25,18 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
     {
         User *sender = &users[GenerateIntValue(0, users.size() - 1)];
         User *receiver = &users[GenerateIntValue(0, users.size() - 1)];
-        if (sender->GetTotalRequestedSendValue() >= sender->GetBalance())
+        if (sender->GetTotalUnconfirmedSendValue() > sender->GetBalance())
             continue;
         if (sender != receiver)
         {
-            // Generate value to send from (1) to (Available Money / 10)
-            int value = GenerateIntValue(1, (sender->GetBalance() - sender->GetTotalRequestedSendValue()) / 10 + 1);
+            // Amount of money that is available to send (Balance - Sent Unconfirmed Amount)
+            unsigned int available_money = sender->GetBalance() - sender->GetTotalUnconfirmedSendValue();
 
-            sender->UpdateTotalRequestedSendValue(value);
+            // Prevents generation of sending value that is bigger than (Available Money / Reducer Value)
+            int reducer_value = (available_money > 3) ? 3 : 1;
+            unsigned int value = GenerateIntValue(0, available_money / reducer_value);
+
+            sender->UpdateTotalUnconfirmedSendValue(value);
 
             string transaction_id = Hash(Hash(sender->GetPublicKey() + receiver->GetPublicKey() + std::to_string(value)));
 

@@ -58,7 +58,7 @@ void Blockchain::CreateBlock(int difficulty_target, int version)
                                      { return u.GetPublicKey() == block_transactions[i].GetReceiverKey(); });
         receiver->UpdateBalance(block_transactions[i].GetValue());
         sender->UpdateBalance(-block_transactions[i].GetValue());
-        sender->UpdateTotalRequestedSendValue(-block_transactions[i].GetValue());
+        sender->UpdateTotalUnconfirmedSendValue(-block_transactions[i].GetValue());
     }
 
     // Construct a new block

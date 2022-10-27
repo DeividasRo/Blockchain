@@ -6,7 +6,7 @@ void PrintAllUsers(std::vector<User> users)
 {
     for (int i = 0; i < users.size(); i++)
     {
-        std::cout << users[i].GetName() << " " << users[i].GetPublicKey() << " " << users[i].GetBalance() << " " << users[i].GetTotalRequestedSendValue() << std::endl;
+        std::cout << users[i].GetName() << " " << users[i].GetPublicKey() << " " << users[i].GetBalance() << " " << users[i].GetTotalUnconfirmedSendValue() << std::endl;
     }
 }
 
@@ -184,4 +184,7 @@ int main()
     return 0;
 }
 
-// Difficulty 7 apie 8 minutes
+// TODO:
+// Comment all code
+// More user commands ()
+// More detailed README
