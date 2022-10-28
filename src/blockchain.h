@@ -16,18 +16,13 @@ using std::string;
 class Blockchain
 {
 private:
-    string name;
+    int difficulty_target;
     std::vector<User> users;
     std::vector<Transaction> transaction_pool;
     std::vector<Block> blocks;
 
 public:
-    Blockchain() : name("unnamed") {}
-
-    Blockchain(string name)
-    {
-        this->name = name;
-    }
+    Blockchain() : difficulty_target(4) {}
 
     void CreateBlock(int difficulty_target, int version = 1);
 
@@ -38,9 +33,14 @@ public:
     inline int TransactionPoolCount() { return transaction_pool.size(); }
     inline int BlockCount() { return blocks.size(); }
 
+    // setters
+    inline void SetDifficultyTarget(int difficulty_target) { this->difficulty_target = difficulty_target; }
+
     // getters
+    inline int GetDifficultyTarget() const { return difficulty_target; }
     inline std::vector<User> GetUsers() const { return users; }
     inline std::vector<Transaction> GetTransactionPool() const { return transaction_pool; }
+    inline Transaction GetTransactionFromPool(int idx) const { return transaction_pool[idx]; }
     inline std::vector<Block> GetBlocks() const { return blocks; }
     inline Block GetBlock(int idx) const { return blocks[idx]; }
 };

@@ -16,7 +16,6 @@ void PrintAllUsers(std::vector<User> users)
 
 void PrintUserInfo(User user)
 {
-    std::cout << std::endl;
     std::cout << "Name: " << user.GetName() << std::endl;
     std::cout << "Public Key: " << user.GetPublicKey() << std::endl;
     std::cout << "Balance: " << user.GetBalance() << std::endl;
@@ -25,7 +24,6 @@ void PrintUserInfo(User user)
 
 void PrintTransactionInfo(Transaction transaction)
 {
-    std::cout << std::endl;
     std::cout << "Status: " << ((transaction.IsConfirmed()) ? "Confirmed" : "Unconfirmed") << std::endl;
     std::cout << "TXID: " << transaction.GetTransactionId() << std::endl;
     std::cout << "Sender Key: " << transaction.GetSenderKey() << std::endl;
@@ -36,7 +34,6 @@ void PrintTransactionInfo(Transaction transaction)
 
 void PrintBlockInfo(Block block)
 {
-    std::cout << std::endl;
     std::cout << "BLOCK #" << block.GetHeight() << std::endl;
     std::cout << "Current Block Hash: " << block.GetCurrentBlockHash() << std::endl;
     std::cout << "Previous Block Hash: " << block.GetPreviousBlockHash() << std::endl;
@@ -74,12 +71,12 @@ std::vector<string> split(string str)
 
 int main()
 {
-    Blockchain blockchain("MyCoin");
-    int difficulty = 4;
     string input;
     int argc;
     std::vector<string> args;
 
+    Blockchain blockchain;
+    blockchain.SetDifficultyTarget(4);
     std::cout << "BLOCKCHAIN INSTANTIATED" << std::endl;
     do
     {
@@ -142,7 +139,7 @@ int main()
             {
                 while (blockchain.TransactionPoolCount() > 0)
                 {
-                    blockchain.CreateBlock(difficulty);
+                    blockchain.CreateBlock(blockchain.GetDifficultyTarget());
                     PrintBlockInfo(blockchain.GetBlock(blockchain.BlockCount() - 1));
                 }
             }
@@ -157,12 +154,12 @@ int main()
             {
                 if (!is_number(args[1]))
                     continue;
-                if (std::stoi(args[1]) < 0 || std::stoi(args[1]) > blockchain.BlockCount())
+                if (std::stoi(args[1]) < 0 || std::stoi(args[1]) > blockchain.BlockCount() - 1)
                     continue;
                 Block block = blockchain.GetBlock(std::stoi(args[1]));
                 for (int i = 0; i < block.TransactionCount(); i++)
                 {
-                    PrintTransactionInfo(block.GetTransaction(i));
+                    std::cout << "TXID: " << block.GetTransaction(i).GetTransactionId() << std::endl;
                 }
             }
             else
@@ -174,7 +171,7 @@ int main()
         {
             for (int i = 0; i < blockchain.TransactionPoolCount(); i++)
             {
-                PrintTransactionInfo(blockchain.GetTransactionPool()[i]);
+                std::cout << "TXID: " << blockchain.GetTransactionFromPool(i).GetTransactionId() << std::endl;
             }
         }
         else if (args[0] == "getblockinfo")
@@ -199,7 +196,10 @@ int main()
                 for (int i = 0; i < blockchain.UserCount(); i++)
                 {
                     if (blockchain.GetUsers()[i].GetName() == args[1])
+                    {
                         PrintUserInfo(blockchain.GetUsers()[i]);
+                        break;
+                    }
                 }
             }
             else
@@ -211,11 +211,32 @@ int main()
         {
             if (argc == 2)
             {
-                for (int i = 0; i < blockchain.UserCount(); i++)
+                std::vector<Transaction> transactions = blockchain.GetTransactionPool();
+                auto transaction = std::find_if(std::begin(transactions), std::end(transactions),
+                                                [&](Transaction const &t)
+                                                { return t.GetTransactionId() == args[1]; });
+                if (transaction != transactions.end())
                 {
-                    if (blockchain.GetUsers()[i].GetName() == args[1])
-                        PrintUserInfo(blockchain.GetUsers()[i]);
+                    PrintTransactionInfo(*transaction);
                 }
+                else
+                {
+                    for (int i = 0; i < blockchain.BlockCount(); i++)
+                    {
+                        Block block = blockchain.GetBlock(i);
+                        transactions = block.GetTransactions();
+                        auto transaction = std::find_if(std::begin(transactions), std::end(transactions),
+                                                        [&](Transaction const &t)
+                                                        { return t.GetTransactionId() == args[1]; });
+                        if (transaction != transactions.end())
+                        {
+                            PrintTransactionInfo(*transaction);
+                            break;
+                        }
+                    }
+                }
+                transactions.clear();
+                transactions.shrink_to_fit();
             }
             else
             {
@@ -241,10 +262,11 @@ int main()
             std::cout << "GENUSERS <amount> - generate a specified amount of blockchain users (wallets)." << std::endl;
             std::cout << "GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool." << std::endl;
             std::cout << "CREATEBLOCKS - initiate block mining until all transactions are confirmed." << std::endl;
-            std::cout << "LISTBLOCKTX <block_index> - list all transaction information of a specified block." << std::endl;
+            std::cout << "LISTBLOCKTX <block-height> - list all transaction information of a specified block." << std::endl;
             std::cout << "LISTTXPOOL - list all real time transaction information in the transaction pool." << std::endl;
-            std::cout << "GETUSERINFO <user_name> - display information about a specified user." << std::endl;
-            std::cout << "GETBLOCKINFO <block_index> - display information about a specified block." << std::endl;
+            std::cout << "GETUSERINFO <user-name> - display information about a specified user." << std::endl;
+            std::cout << "GETTXINFO <txid> - display information about a specified transaction" << std::endl;
+            std::cout << "GETBLOCKINFO <block-height> - display information about a specified block." << std::endl;
             std::cout << "GETUSERCOUNT - display a real time amount of users (wallets) in the blockchain." << std::endl;
             std::cout << "GETBLOCKCOUNT - display a real time amount of blocks in the blockchain." << std::endl;
             std::cout << "GETTXPOOLSIZE - display a real time amount of unconfirmed transactions in the transaction pool." << std::endl;

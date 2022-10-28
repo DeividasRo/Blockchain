@@ -16,6 +16,7 @@ void GenerateUsers(std::vector<User> &users, int amount)
         string user_name = "user" + std::to_string(users.size() + 1);
         User user = User(user_name, Hash(user_name), GenerateIntValue(100, 100000));
         users.push_back(user);
+        // std::cout << "Generated " << user_name << std::endl;
     }
 }
 
@@ -47,7 +48,7 @@ void GenerateTransactions(std::vector<Transaction> &transactions, std::vector<Us
 
         // Push newly created transaction to transaction pool
         transactions.push_back(transaction);
-
+        // std::cout << "Generated TXID: " << transaction_id << std::endl;
         i++;
     }
 }
