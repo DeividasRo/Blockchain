@@ -11,9 +11,10 @@ private:
     string sender_key;
     string receiver_key;
     int value = 0;
+    bool confirmed;
 
 public:
-    Transaction() : transaction_id(""), sender_key(""), receiver_key(""), value(0) {}
+    Transaction() : transaction_id(""), sender_key(""), receiver_key(""), value(0), confirmed(false) {}
 
     Transaction(string transaction_id, string sender_key, string receiver_key, int value)
     {
@@ -21,7 +22,12 @@ public:
         this->sender_key = sender_key;
         this->receiver_key = receiver_key;
         this->value = value;
+        this->confirmed = false;
     }
+
+    inline void Confirm() { this->confirmed = true; };
+    inline bool IsConfirmed() { return confirmed; };
+
     // getters
     inline string GetTransactionId() const { return transaction_id; }
     inline string GetSenderKey() const { return sender_key; }

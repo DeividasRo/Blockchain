@@ -6,7 +6,11 @@ void PrintAllUsers(std::vector<User> users)
 {
     for (int i = 0; i < users.size(); i++)
     {
-        std::cout << users[i].GetName() << " " << users[i].GetPublicKey() << " " << users[i].GetBalance() << " " << users[i].GetTotalUnconfirmedSendValue() << std::endl;
+        std::cout << "N: " << users[i].GetName()
+                  << "  PK: " << users[i].GetPublicKey()
+                  << "  B: " << users[i].GetBalance()
+                  << "  TUSV: " << users[i].GetTotalUnconfirmedSendValue()
+                  << std::endl;
     }
 }
 
@@ -22,6 +26,7 @@ void PrintUserInfo(User user)
 void PrintTransactionInfo(Transaction transaction)
 {
     std::cout << std::endl;
+    std::cout << "Status: " << ((transaction.IsConfirmed()) ? "Confirmed" : "Unconfirmed") << std::endl;
     std::cout << "TXID: " << transaction.GetTransactionId() << std::endl;
     std::cout << "Sender Key: " << transaction.GetSenderKey() << std::endl;
     std::cout << "Receiver Key: " << transaction.GetReceiverKey() << std::endl;
@@ -107,7 +112,7 @@ int main()
                 std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
-        else if (args[0] == "gentransactions")
+        else if (args[0] == "gentx")
         {
             if (argc == 2)
             {
@@ -146,16 +151,16 @@ int main()
                 std::cout << "No transactions in transaction pool." << std::endl;
             }
         }
-        else if (args[0] == "listblocktransactions")
+        else if (args[0] == "listblocktx")
         {
             if (argc == 2)
             {
                 if (!is_number(args[1]))
                     continue;
-                Block block = blockchain.GetBlock(std::stoi(args[1]));
                 if (std::stoi(args[1]) < 0 || std::stoi(args[1]) > blockchain.BlockCount())
                     continue;
-                for (int i = 0; i < blockchain.GetBlock(std::stoi(args[1])).TransactionCount(); i++)
+                Block block = blockchain.GetBlock(std::stoi(args[1]));
+                for (int i = 0; i < block.TransactionCount(); i++)
                 {
                     PrintTransactionInfo(block.GetTransaction(i));
                 }
@@ -163,6 +168,13 @@ int main()
             else
             {
                 std::cout << "Invalid amount of arguments." << std::endl;
+            }
+        }
+        else if (args[0] == "listtxpool")
+        {
+            for (int i = 0; i < blockchain.TransactionPoolCount(); i++)
+            {
+                PrintTransactionInfo(blockchain.GetTransactionPool()[i]);
             }
         }
         else if (args[0] == "getblockinfo")
@@ -195,15 +207,47 @@ int main()
                 std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
+        else if (args[0] == "gettxinfo")
+        {
+            if (argc == 2)
+            {
+                for (int i = 0; i < blockchain.UserCount(); i++)
+                {
+                    if (blockchain.GetUsers()[i].GetName() == args[1])
+                        PrintUserInfo(blockchain.GetUsers()[i]);
+                }
+            }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
+            }
+        }
+        else if (args[0] == "getusercount")
+        {
+
+            std::cout << "Currently there are " << blockchain.UserCount() << " users (wallets) in the blockchain." << std::endl;
+        }
+        else if (args[0] == "getblockcount")
+        {
+            std::cout << "Currently there are " << blockchain.BlockCount() << " blocks in the blockchain." << std::endl;
+        }
+        else if (args[0] == "gettxpoolsize")
+        {
+            std::cout << "Currently there are " << blockchain.TransactionPoolCount() << " unconfirmed transactions in the transaction pool." << std::endl;
+        }
         else if (args[0] == "help")
         {
             std::cout << std::endl;
             std::cout << "GENUSERS <amount> - generate a specified amount of blockchain users (wallets)." << std::endl;
-            std::cout << "GENTRANSACTIONS <amount> - generate a specified amount of unconfirmed transactions in transaction pool." << std::endl;
+            std::cout << "GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool." << std::endl;
             std::cout << "CREATEBLOCKS - initiate block mining until all transactions are confirmed." << std::endl;
-            std::cout << "LISTBLOCKTRANSACTIONS <block_index> - list all transaction information of a specified block." << std::endl;
+            std::cout << "LISTBLOCKTX <block_index> - list all transaction information of a specified block." << std::endl;
+            std::cout << "LISTTXPOOL - list all real time transaction information in the transaction pool." << std::endl;
+            std::cout << "GETUSERINFO <user_name> - display information about a specified user." << std::endl;
             std::cout << "GETBLOCKINFO <block_index> - display information about a specified block." << std::endl;
-            std::cout << "GETUSERINFO <user_name>- display information about a specified user." << std::endl;
+            std::cout << "GETUSERCOUNT - display a real time amount of users (wallets) in the blockchain." << std::endl;
+            std::cout << "GETBLOCKCOUNT - display a real time amount of blocks in the blockchain." << std::endl;
+            std::cout << "GETTXPOOLSIZE - display a real time amount of unconfirmed transactions in the transaction pool." << std::endl;
             std::cout << std::endl;
         }
         else
