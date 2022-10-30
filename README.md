@@ -1,4 +1,4 @@
-# Blockchain
+# Supaprastinta blokų grandinė
 
 ## Naudojimo instrukcija
 
@@ -18,3 +18,7 @@ LISTBLOCKTRANSACTIONS <block_index> - list all transaction information of a spec
 GETBLOCKINFO <block_index> - display information about a specified block.
 GETUSERINFO <user_name>- display information about a specified user.
 ```
+
+## Programos aprašymas
+
+

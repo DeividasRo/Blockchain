@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <sstream>
 
 using std::string;
 
@@ -20,6 +21,12 @@ public:
         this->name = name;
         this->public_key = public_key;
         this->balance = balance;
+    }
+
+    friend std::istream &operator>>(std::istream &in, User &u)
+    {
+        in >> u.name >> u.public_key >> u.balance >> u.total_unconfirmed_send_value;
+        return in;
     }
 
     inline void UpdateBalance(int value) { this->balance += value; }

@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 using std::string;
 
@@ -25,6 +26,22 @@ public:
     Blockchain() : difficulty_target(4) {}
 
     void CreateBlock(int difficulty_target, int version = 1);
+    void SaveUsersData();
+    void SaveTransactionPoolData();
+    void SaveBlocksData();
+    void LoadUsersData();
+    void LoadTransactionPoolData();
+    void LoadBlocksData();
+
+    void ClearBlockchain()
+    {
+        users.clear();
+        transaction_pool.clear();
+        blocks.clear();
+        users.shrink_to_fit();
+        transaction_pool.shrink_to_fit();
+        blocks.shrink_to_fit();
+    }
 
     inline void GenerateBlockchainUsers(int amount) { GenerateUsers(users, amount); }
     inline void GenerateTransactionPool(int amount) { GenerateTransactions(transaction_pool, users, amount); }

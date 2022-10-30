@@ -1,6 +1,4 @@
 #include "blockchain.h"
-#include <iostream>
-#include <iomanip>
 
 void PrintAllUsers(std::vector<User> users)
 {
@@ -54,6 +52,12 @@ bool is_number(const std::string &s)
                                       { return !std::isdigit(c); }) == s.end();
 }
 
+bool file_exists(const char *fileName)
+{
+    std::ifstream infile(fileName);
+    return infile.good();
+}
+
 std::vector<string> split(string str)
 {
     std::vector<string> internal;
@@ -77,6 +81,12 @@ int main()
 
     Blockchain blockchain;
     blockchain.SetDifficultyTarget(4);
+    if (file_exists("data/users.txt"))
+        blockchain.LoadUsersData();
+    if (file_exists("data/txpool.txt"))
+        blockchain.LoadTransactionPoolData();
+    if (file_exists("data/blocks.txt"))
+        blockchain.LoadBlocksData();
     std::cout << "BLOCKCHAIN INSTANTIATED" << std::endl;
     do
     {
@@ -103,6 +113,8 @@ int main()
                 blockchain.GenerateBlockchainUsers(std::stoi(args[1]));
                 std::cout << "Generated " << std::stoi(args[1]) << " new users." << std::endl;
                 std::cout << "Currently there are " << blockchain.UserCount() << " users." << std::endl;
+
+                blockchain.SaveUsersData();
             }
             else
             {
@@ -127,6 +139,9 @@ int main()
                 blockchain.GenerateTransactionPool(std::stoi(args[1]));
                 std::cout << "Generated " << blockchain.TransactionPoolCount() - pre_gen_pool_size << " new transactions in transaction pool." << std::endl;
                 std::cout << "Currently there are " << blockchain.TransactionPoolCount() << " transactions in transaction pool." << std::endl;
+
+                blockchain.SaveUsersData();
+                blockchain.SaveTransactionPoolData();
             }
             else
             {
@@ -142,6 +157,9 @@ int main()
                     blockchain.CreateBlock(blockchain.GetDifficultyTarget());
                     PrintBlockInfo(blockchain.GetBlock(blockchain.BlockCount() - 1));
                 }
+                blockchain.SaveUsersData();
+                blockchain.SaveTransactionPoolData();
+                blockchain.SaveBlocksData();
             }
             else
             {
@@ -256,6 +274,13 @@ int main()
         {
             std::cout << "Currently there are " << blockchain.TransactionPoolCount() << " unconfirmed transactions in the transaction pool." << std::endl;
         }
+        else if (args[0] == "reset")
+        {
+            int status = remove("data/users.txt");
+            status = remove("data/txpool.txt");
+            status = remove("data/blocks.txt");
+            blockchain.ClearBlockchain();
+        }
         else if (args[0] == "help")
         {
             std::cout << std::endl;
@@ -270,6 +295,7 @@ int main()
             std::cout << "GETUSERCOUNT - display a real time amount of users (wallets) in the blockchain." << std::endl;
             std::cout << "GETBLOCKCOUNT - display a real time amount of blocks in the blockchain." << std::endl;
             std::cout << "GETTXPOOLSIZE - display a real time amount of unconfirmed transactions in the transaction pool." << std::endl;
+            std::cout << "RESET - reset blockchain, clearing all of its data." << std::endl;
             std::cout << std::endl;
         }
         else
@@ -280,7 +306,4 @@ int main()
     return 0;
 }
 
-// TODO:
-// Comment all code
-// More user commands ()
-// More detailed README
+// Difficulty 7 takes around 8 minutes

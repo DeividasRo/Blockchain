@@ -7,6 +7,113 @@ string IntToHexString(unsigned int value)
     return stream.str();
 }
 
+void Blockchain::SaveUsersData()
+{
+    std::ofstream outf("data/users.txt");
+    std::stringstream buffer;
+    bool first = true;
+    for (auto user : users)
+    {
+        if (!first)
+            buffer << "\n";
+        buffer << user.GetName() << " " << user.GetPublicKey() << " " << user.GetBalance() << " " << user.GetTotalUnconfirmedSendValue();
+        first = false;
+    }
+    outf << buffer.str();
+    buffer.clear();
+    outf.close();
+}
+
+void Blockchain::SaveTransactionPoolData()
+{
+    std::ofstream outf("data/txpool.txt");
+    std::stringstream buffer;
+    bool first = true;
+    for (auto transaction : transaction_pool)
+    {
+        if (!first)
+            buffer << "\n";
+        buffer << transaction.GetTransactionId() << " " << transaction.GetSenderKey() << " " << transaction.GetReceiverKey() << " " << transaction.GetValue();
+        first = false;
+    }
+    outf << buffer.str();
+    buffer.clear();
+    outf.close();
+}
+
+void Blockchain::SaveBlocksData()
+{
+    std::ofstream outf("data/blocks.txt");
+    std::stringstream buffer;
+    bool first = true;
+    for (auto block : blocks)
+    {
+        if (!first)
+            buffer << "\n";
+        buffer << block.GetCurrentBlockHash() << " " << block.GetPreviousBlockHash() << " " << block.GetMerkelRootHash() << " " << block.GetTimestamp() << " " << block.GetNonce() << " " << block.GetDifficultyTarget() << " " << block.GetHeight() << " " << block.GetVersion() << " " << block.TransactionCount();
+        for (auto transaction : block.GetTransactions())
+        {
+            buffer << "\n"
+                   << transaction.GetTransactionId() << " " << transaction.GetSenderKey() << " " << transaction.GetReceiverKey() << " " << transaction.GetValue();
+        }
+        first = false;
+    }
+    outf << buffer.str();
+    buffer.clear();
+    outf.close();
+}
+
+void Blockchain::LoadUsersData()
+{
+    std::ifstream inf("data/users.txt");
+    if (inf.peek() == std::ifstream::traits_type::eof())
+        return;
+    std::stringstream buffer;
+    buffer << inf.rdbuf();
+    inf.close();
+    while (!buffer.eof())
+    {
+        User user;
+        buffer >> user;
+        users.push_back(user);
+    }
+    buffer.clear();
+}
+
+void Blockchain::LoadTransactionPoolData()
+{
+    std::ifstream inf("data/txpool.txt");
+    if (inf.peek() == std::ifstream::traits_type::eof())
+        return;
+    std::stringstream buffer;
+    buffer << inf.rdbuf();
+    inf.close();
+    while (!buffer.eof())
+    {
+        Transaction transaction;
+        buffer >> transaction;
+        transaction_pool.push_back(transaction);
+    }
+    buffer.clear();
+}
+
+void Blockchain::LoadBlocksData()
+{
+    std::ifstream inf("data/blocks.txt");
+    if (inf.peek() == std::ifstream::traits_type::eof())
+        return;
+    std::stringstream buffer;
+    buffer << inf.rdbuf();
+    inf.close();
+    while (!buffer.eof())
+    {
+        Block block;
+        buffer >> block;
+        blocks.push_back(block);
+    }
+    buffer.clear();
+}
+
 void Blockchain::CreateBlock(int difficulty_target, int version)
 {
     // Randomly select 100 transactions from transaction pool

@@ -15,10 +15,11 @@ private:
     int difficulty_target;
     int height;
     int version;
+    int transaction_count;
     std::vector<Transaction> transactions;
 
 public:
-    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1) {}
+    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1), transaction_count(0) {}
 
     Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned int nonce, int difficulty_target, int height, int version)
     {
@@ -30,12 +31,41 @@ public:
         this->difficulty_target = difficulty_target;
         this->height = height;
         this->version = version;
+        this->transaction_count = 0;
     }
 
-    inline int TransactionCount() const { return transactions.size(); };
+    ~Block()
+    {
+        transactions.clear();
+        transactions.shrink_to_fit();
+    }
+
+    friend std::istream &operator>>(std::istream &in, Block &b)
+    {
+        in >> b.current_block_hash >> b.previous_block_hash >> b.merkel_root_hash >> b.timestamp >> b.nonce >> b.difficulty_target >> b.height >> b.version >> b.transaction_count;
+        for (int i = 0; i < b.transaction_count; i++)
+        {
+            Transaction t;
+            string s1, s2, s3;
+            int i1;
+            in >> s1 >> s2 >> s3 >> i1;
+            t.SetTransactionId(s1);
+            t.SetSenderKey(s2);
+            t.SetReceiverKey(s3);
+            t.SetValue(i1);
+            b.transactions.push_back(t);
+        }
+        return in;
+    }
+
+    inline int TransactionCount() const { return transaction_count; };
 
     // setters
-    inline void SetTransactions(std::vector<Transaction> transactions) { this->transactions = transactions; }
+    inline void SetTransactions(std::vector<Transaction> transactions)
+    {
+        this->transactions = transactions;
+        transaction_count = transactions.size();
+    }
     // getters
     inline string GetCurrentBlockHash() const { return current_block_hash; }
     inline string GetPreviousBlockHash() const { return previous_block_hash; }
