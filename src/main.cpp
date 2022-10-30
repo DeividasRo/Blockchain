@@ -1,4 +1,5 @@
 #include "blockchain.h"
+#include "helpers.h"
 
 void PrintAllUsers(std::vector<User> users)
 {
@@ -36,41 +37,13 @@ void PrintBlockInfo(Block block)
     std::cout << "Current Block Hash: " << block.GetCurrentBlockHash() << std::endl;
     std::cout << "Previous Block Hash: " << block.GetPreviousBlockHash() << std::endl;
     std::cout << "Merkel Root Hash: " << block.GetMerkelRootHash() << std::endl;
-    std::cout << "Timestamp: " << block.GetTimestamp() << std::endl;
+    std::cout << "Timestamp: " << timeStampToHReadble(block.GetTimestamp());
     std::cout << "Nonce: " << block.GetNonce() << std::endl;
     std::cout << "Difficulty Target: " << block.GetDifficultyTarget() << std::endl;
     std::cout << "Transaction Count: " << block.TransactionCount() << std::endl;
     std::cout << "Version: " << block.GetVersion() << std::endl;
     std::cout << "Height: " << block.GetHeight() << std::endl;
     std::cout << std::endl;
-}
-
-bool is_number(const std::string &s)
-{
-    return !s.empty() && std::find_if(s.begin(),
-                                      s.end(), [](unsigned char c)
-                                      { return !std::isdigit(c); }) == s.end();
-}
-
-bool file_exists(const char *fileName)
-{
-    std::ifstream infile(fileName);
-    return infile.good();
-}
-
-std::vector<string> split(string str)
-{
-    std::vector<string> internal;
-    std::istringstream ss(str);
-
-    string word;
-
-    while (ss >> word)
-    {
-        internal.push_back(word);
-    }
-
-    return internal;
 }
 
 int main()
