@@ -15,6 +15,7 @@ class Blockchain
 {
 private:
     int difficulty_target;
+    int version;
     std::vector<User> users;
     std::vector<Transaction> transaction_pool;
     std::vector<Block> blocks;
@@ -23,7 +24,8 @@ public:
     Blockchain() : difficulty_target(4) {}
 
     // Mining
-    void CreateBlock(int difficulty_target, int version = 1);
+    void CreateBlock();
+    bool MineBlock(unsigned long long nonce_target, string miner_name);
 
     // Generators
     void GenerateUsers(int amount);
@@ -57,9 +59,11 @@ public:
 
     // setters
     inline void SetDifficultyTarget(int difficulty_target) { this->difficulty_target = difficulty_target; }
+    inline void SetVersion(int version) { this->version = version; }
 
     // getters
     inline int GetDifficultyTarget() const { return difficulty_target; }
+    inline int GetVersion() const { return version; }
     inline std::vector<User> GetUsers() const { return users; }
     inline std::vector<Transaction> GetTransactionPool() const { return transaction_pool; }
     inline Transaction GetTransactionFromPool(int idx) const { return transaction_pool[idx]; }

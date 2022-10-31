@@ -10,6 +10,7 @@ private:
     string current_block_hash;
     string previous_block_hash;
     string merkel_root_hash;
+    string miner;
     unsigned int timestamp;
     unsigned long long nonce;
     int difficulty_target;
@@ -19,13 +20,14 @@ private:
     std::vector<Transaction> transactions;
 
 public:
-    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1), transaction_count(0) {}
+    Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), miner(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1), transaction_count(0) {}
 
-    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned long long nonce, int difficulty_target, int height, int version, std::vector<Transaction> transactions)
+    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, string miner, unsigned int timestamp, unsigned long long nonce, int difficulty_target, int height, int version, std::vector<Transaction> transactions)
     {
         this->current_block_hash = current_block_hash;
         this->previous_block_hash = previous_block_hash;
         this->merkel_root_hash = merkel_root_hash;
+        this->miner = miner;
         this->timestamp = timestamp;
         this->nonce = nonce;
         this->difficulty_target = difficulty_target;
@@ -43,7 +45,7 @@ public:
 
     friend std::istream &operator>>(std::istream &in, Block &b)
     {
-        in >> b.current_block_hash >> b.previous_block_hash >> b.merkel_root_hash >> b.timestamp >> b.nonce >> b.difficulty_target >> b.height >> b.version >> b.transaction_count;
+        in >> b.current_block_hash >> b.previous_block_hash >> b.merkel_root_hash >> b.miner >> b.timestamp >> b.nonce >> b.difficulty_target >> b.height >> b.version >> b.transaction_count;
         for (int i = 0; i < b.transaction_count; i++)
         {
             Transaction t;
@@ -65,6 +67,7 @@ public:
     inline string GetCurrentBlockHash() const { return current_block_hash; }
     inline string GetPreviousBlockHash() const { return previous_block_hash; }
     inline string GetMerkelRootHash() const { return merkel_root_hash; }
+    inline string GetMiner() const { return miner; }
     inline unsigned int GetTimestamp() const { return timestamp; }
     unsigned long long GetNonce() const { return nonce; }
     inline int GetDifficultyTarget() const { return difficulty_target; }

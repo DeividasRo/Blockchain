@@ -38,6 +38,7 @@ void PrintBlockInfo(Block block)
     std::cout << "Current Block Hash: " << block.GetCurrentBlockHash() << std::endl;
     std::cout << "Previous Block Hash: " << block.GetPreviousBlockHash() << std::endl;
     std::cout << "Merkel Root Hash: " << block.GetMerkelRootHash() << std::endl;
+    std::cout << "Miner: " << block.GetMiner() << std::endl;
     std::cout << "Timestamp: " << TimeStampToHReadable(block.GetTimestamp());
     std::cout << "Nonce: " << block.GetNonce() << std::endl;
     std::cout << "Difficulty Target: " << block.GetDifficultyTarget() << std::endl;
@@ -52,15 +53,18 @@ int main()
     string input;
     int argc;
     std::vector<string> args;
-
     Blockchain blockchain;
+
+    blockchain.SetDifficultyTarget(5);
+    blockchain.SetVersion(1);
+
     if (file_exists("data/users.txt"))
         blockchain.LoadUsersData();
     if (file_exists("data/txpool.txt"))
         blockchain.LoadTransactionPoolData();
     if (file_exists("data/blocks.txt"))
         blockchain.LoadBlocksData();
-    blockchain.SetDifficultyTarget(5);
+
     std::cout << "BLOCKCHAIN INITIATED" << std::endl;
     do
     {
@@ -128,17 +132,17 @@ int main()
             {
                 while (blockchain.TransactionPoolCount() > 0)
                 {
-                    blockchain.CreateBlock(blockchain.GetDifficultyTarget());
+                    blockchain.CreateBlock();
+
                     PrintBlockInfo(blockchain.GetBlock(blockchain.BlockCount() - 1));
+
+                    blockchain.SaveUsersData();
+                    blockchain.SaveTransactionPoolData();
+                    blockchain.SaveBlocksData();
                 }
-                blockchain.SaveUsersData();
-                blockchain.SaveTransactionPoolData();
-                blockchain.SaveBlocksData();
             }
             else
-            {
                 std::cout << "No transactions in transaction pool." << std::endl;
-            }
         }
         else if (args[0] == "listblocktx")
         {
@@ -280,4 +284,5 @@ int main()
     return 0;
 }
 
+// Difficulty 6 takes around 4 minutes
 // Difficulty 7 takes around 8 minutes
