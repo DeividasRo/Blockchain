@@ -114,6 +114,48 @@ void Blockchain::LoadBlocksData()
     buffer.clear();
 }
 
+void Blockchain::GenerateUsers(int amount)
+{
+    for (int i = 0; i < amount; i++)
+    {
+        string user_name = "user" + std::to_string(users.size() + 1);
+        User user = User(user_name, Hash(user_name), GenerateIntValue(100, 100000));
+        users.push_back(user);
+    }
+}
+
+void Blockchain::GenerateTransactionPool(int amount)
+{
+    int i = 0;
+    while (i < amount)
+    {
+        User *sender = &users[GenerateIntValue(0, users.size() - 1)];
+
+        User *receiver = &users[GenerateIntValue(0, users.size() - 1)];
+        if (sender == receiver)
+            continue;
+        if (sender->GetTotalUnconfirmedSendValue() > sender->GetBalance())
+            continue;
+        // Amount of money that is available to send (Balance - Sent Unconfirmed Amount)
+        unsigned int available_money = sender->GetBalance() - sender->GetTotalUnconfirmedSendValue();
+
+        // Prevents generation of sending value that is bigger than (Available Money / Reducer Value)
+        int reducer_value = (available_money > 3) ? 3 : 1;
+        unsigned int value = GenerateIntValue(0, available_money / reducer_value);
+
+        sender->UpdateTotalUnconfirmedSendValue(value);
+
+        string transaction_id = Hash(Hash(sender->GetPublicKey() + receiver->GetPublicKey() + std::to_string(value)));
+
+        // Create new transaction
+        Transaction transaction = Transaction(transaction_id, sender->GetPublicKey(), receiver->GetPublicKey(), value);
+
+        // Push newly created transaction to transaction pool
+        transaction_pool.push_back(transaction);
+        i++;
+    }
+}
+
 void Blockchain::CreateBlock(int difficulty_target, int version)
 {
     // Randomly select 100 transactions from transaction pool
@@ -130,14 +172,14 @@ void Blockchain::CreateBlock(int difficulty_target, int version)
     }
     transaction_pool.shrink_to_fit();
 
-    unsigned int timestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
     string merkle_hash = Hash(transaction_ids);
     string previous_block_hash;
     if (blocks.size() > 0)
         previous_block_hash = blocks.back().GetCurrentBlockHash();
     else
         previous_block_hash.assign(64, '0');
+
+    unsigned int timestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     string block_data = IntToHexString(version) + previous_block_hash + merkle_hash + IntToHexString(timestamp) + IntToHexString(difficulty_target);
 

@@ -1,40 +1,26 @@
+#pragma once
+
 #include <ctime>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <random>
+#include <chrono>
 
 using std::string;
 
-string timeStampToHReadble(time_t timestamp)
-{
-    time_t a = timestamp;
-    return ctime(&a);
-}
-bool is_number(const std::string &s)
-{
-    return !s.empty() && std::find_if(s.begin(),
-                                      s.end(), [](unsigned char c)
-                                      { return !std::isdigit(c); }) == s.end();
-}
+// Generate integer value in a specified range
+int GenerateIntValue(int min_val, int max_val);
 
-bool file_exists(const char *fileName)
-{
-    std::ifstream infile(fileName);
-    return infile.good();
-}
+// Convert unix time to human readable date + time format
+string timeStampToHReadble(time_t timestamp);
 
-std::vector<string> split(string str)
-{
-    std::vector<string> internal;
-    std::istringstream ss(str);
+// Check if string is numeric
+bool is_number(const std::string &s);
 
-    string word;
+// Check if file exists
+bool file_exists(const char *fileName);
 
-    while (ss >> word)
-    {
-        internal.push_back(word);
-    }
-
-    return internal;
-}
+// Split string into vector of words
+std::vector<string> split(string str);

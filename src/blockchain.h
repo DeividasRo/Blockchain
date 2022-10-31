@@ -3,8 +3,7 @@
 #include "transaction.h"
 #include "block.h"
 #include "myhash.h"
-#include "generator.h"
-#include <chrono>
+#include "helpers.h"
 #include <string>
 #include <vector>
 #include <iomanip>
@@ -25,14 +24,24 @@ private:
 public:
     Blockchain() : difficulty_target(4) {}
 
+    // Mining
     void CreateBlock(int difficulty_target, int version = 1);
+
+    // Generators
+    void GenerateUsers(int amount);
+    void GenerateTransactionPool(int amount);
+
+    // Saving data to .txt files
     void SaveUsersData();
     void SaveTransactionPoolData();
     void SaveBlocksData();
+
+    // Loading data from .txt files
     void LoadUsersData();
     void LoadTransactionPoolData();
     void LoadBlocksData();
 
+    // Clear all contents of blockchain
     void ClearBlockchain()
     {
         users.clear();
@@ -43,9 +52,7 @@ public:
         blocks.shrink_to_fit();
     }
 
-    inline void GenerateBlockchainUsers(int amount) { GenerateUsers(users, amount); }
-    inline void GenerateTransactionPool(int amount) { GenerateTransactions(transaction_pool, users, amount); }
-
+    // Return the amount of elements in a container
     inline int UserCount() { return users.size(); }
     inline int TransactionPoolCount() { return transaction_pool.size(); }
     inline int BlockCount() { return blocks.size(); }

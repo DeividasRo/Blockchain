@@ -1,5 +1,4 @@
-#ifndef MYHASH_H
-#define MYHASH_H
+#pragma once
 
 #include <string>
 #include <sstream>
@@ -7,5 +6,3 @@
 #include <iomanip>
 
 std::string Hash(std::string);
-
-#endif
