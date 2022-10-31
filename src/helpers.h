@@ -7,6 +7,7 @@
 #include <sstream>
 #include <random>
 #include <chrono>
+#include <algorithm>
 
 using std::string;
 
