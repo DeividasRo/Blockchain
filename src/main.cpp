@@ -144,6 +144,10 @@ int main()
             else
                 std::cout << "No transactions in transaction pool." << std::endl;
         }
+        else if (args[0] == "listusers")
+        {
+            PrintAllUsers(blockchain.GetUsers());
+        }
         else if (args[0] == "listblocktx")
         {
             if (argc == 2)
@@ -265,8 +269,9 @@ int main()
             std::cout << "GENUSERS <amount> - generate a specified amount of blockchain users (wallets)." << std::endl;
             std::cout << "GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool." << std::endl;
             std::cout << "CREATEBLOCKS - initiate block mining until all transactions are confirmed." << std::endl;
+            std::cout << "LISTUSERS - list information of all users (wallets) in the blockchain." << std::endl;
             std::cout << "LISTBLOCKTX <block-height> - list all transaction information of a specified block." << std::endl;
-            std::cout << "LISTTXPOOL - list all real time transaction information in the transaction pool." << std::endl;
+            std::cout << "LISTTXPOOL - list all real time transaction ids in the transaction pool." << std::endl;
             std::cout << "GETUSERINFO <public-key> - display information about a specified user." << std::endl;
             std::cout << "GETTXINFO <txid> - display information about a specified transaction" << std::endl;
             std::cout << "GETBLOCKINFO <block-height> - display information about a specified block." << std::endl;
