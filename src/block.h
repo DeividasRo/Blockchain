@@ -11,7 +11,7 @@ private:
     string previous_block_hash;
     string merkel_root_hash;
     unsigned int timestamp;
-    unsigned int nonce;
+    unsigned long long nonce;
     int difficulty_target;
     int height;
     int version;
@@ -21,7 +21,7 @@ private:
 public:
     Block() : current_block_hash(""), previous_block_hash(""), merkel_root_hash(""), timestamp(0), nonce(0), difficulty_target(0), height(0), version(1), transaction_count(0) {}
 
-    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned int nonce, int difficulty_target, int height, int version)
+    Block(string current_block_hash, string previous_block_hash, string merkel_root_hash, unsigned int timestamp, unsigned long long nonce, int difficulty_target, int height, int version, std::vector<Transaction> transactions)
     {
         this->current_block_hash = current_block_hash;
         this->previous_block_hash = previous_block_hash;
@@ -31,7 +31,8 @@ public:
         this->difficulty_target = difficulty_target;
         this->height = height;
         this->version = version;
-        this->transaction_count = 0;
+        this->transactions = transactions;
+        this->transaction_count = transactions.size();
     }
 
     ~Block()
@@ -60,18 +61,12 @@ public:
 
     inline int TransactionCount() const { return transaction_count; };
 
-    // setters
-    inline void SetTransactions(std::vector<Transaction> transactions)
-    {
-        this->transactions = transactions;
-        transaction_count = transactions.size();
-    }
     // getters
     inline string GetCurrentBlockHash() const { return current_block_hash; }
     inline string GetPreviousBlockHash() const { return previous_block_hash; }
     inline string GetMerkelRootHash() const { return merkel_root_hash; }
     inline unsigned int GetTimestamp() const { return timestamp; }
-    inline int GetNonce() const { return nonce; }
+    unsigned long long GetNonce() const { return nonce; }
     inline int GetDifficultyTarget() const { return difficulty_target; }
     inline int GetHeight() const { return height; }
     inline int GetVersion() const { return version; }

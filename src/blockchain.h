@@ -67,4 +67,4 @@ public:
     inline Block GetBlock(int idx) const { return blocks[idx]; }
 };
 
-string IntToHexString(unsigned int value);
+string MerkleRootHash(std::vector<string> merkle);

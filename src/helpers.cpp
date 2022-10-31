@@ -9,7 +9,14 @@ int GenerateIntValue(int min_val, int max_val)
     return dist(gen);
 }
 
-string timeStampToHReadble(time_t timestamp)
+string IntToHexString(unsigned int value)
+{
+    std::stringstream stream;
+    stream << std::hex << value;
+    return stream.str();
+}
+
+string TimeStampToHReadable(time_t timestamp)
 {
     time_t a = timestamp;
     return ctime(&a);

@@ -14,8 +14,11 @@ using std::string;
 // Generate integer value in a specified range
 int GenerateIntValue(int min_val, int max_val);
 
+// Convert integer to hex string
+string IntToHexString(unsigned int value);
+
 // Convert unix time to human readable date + time format
-string timeStampToHReadble(time_t timestamp);
+string TimeStampToHReadable(time_t timestamp);
 
 // Check if string is numeric
 bool is_number(const std::string &s);
