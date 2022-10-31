@@ -14,8 +14,9 @@
 GENUSERS <amount> - generate a specified amount of blockchain users (wallets).
 GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool.
 CREATEBLOCKS - initiate block mining until all transactions are confirmed.
+LISTUSERS - list information of all users (wallets) in the blockchain.
 LISTBLOCKTX <block-height> - list all transaction information of a specified block.
-LISTTXPOOL - list all real time transaction information in the transaction pool.
+LISTTXPOOL - list all real time transaction ids in the transaction pool.
 GETUSERINFO <public-key> - display information about a specified user.
 GETTXINFO <txid> - display information about a specified transaction
 GETBLOCKINFO <block-height> - display information about a specified block.

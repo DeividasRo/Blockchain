@@ -10,8 +10,8 @@ class User
 private:
     string name;
     string public_key;
-    unsigned int balance = 0;
-    unsigned int total_unconfirmed_send_value = 0; // Total sent amount of value in a transaction that is waiting to be put into a block
+    unsigned int balance;
+    unsigned int total_unconfirmed_send_value; // Total sent amount of value in a transaction that is waiting to be put into a block
 
 public:
     User() : name(""), public_key(""), balance(0), total_unconfirmed_send_value(0) {}
@@ -21,6 +21,7 @@ public:
         this->name = name;
         this->public_key = public_key;
         this->balance = balance;
+        this->total_unconfirmed_send_value = 0;
     }
 
     friend std::istream &operator>>(std::istream &in, User &u)

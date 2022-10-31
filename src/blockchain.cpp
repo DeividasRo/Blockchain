@@ -183,7 +183,7 @@ void Blockchain::CreateBlock()
         std::vector<string> miners = {"1A", "1B", "1C", "1D", "1E"};
         for (int i = 0; i < miner_count; i++)
         {
-            int miner_idx = GenerateIntValue(0, miners.size());
+            int miner_idx = GenerateIntValue(0, miners.size() - 1);
             if (MineBlock(nonce_target, miners[miner_idx]))
                 return;
             miners.erase(miners.begin() + miner_idx);
@@ -195,19 +195,19 @@ void Blockchain::CreateBlock()
 
 bool Blockchain::MineBlock(unsigned long long nonce_target, string miner_name)
 {
-    // Randomly assign 100 transactions for 5 different miners from transaction pool
+    std::vector<Transaction> temp_transaction_pool = transaction_pool;
     std::vector<Transaction> block_transactions;
-    int transaction_idxs[100];
     std::vector<string> transaction_ids;
     for (int i = 0; i < 100; i++)
     {
-        transaction_idxs[i] = GenerateIntValue(0, transaction_pool.size() - 1);
-        block_transactions.push_back(transaction_pool[transaction_idxs[i]]);
-        transaction_ids.push_back(transaction_pool[transaction_idxs[i]].GetTransactionId());
+        int transaction_idx = GenerateIntValue(0, temp_transaction_pool.size() - 1);
+        block_transactions.push_back(temp_transaction_pool[transaction_idx]);
+        transaction_ids.push_back(temp_transaction_pool[transaction_idx].GetTransactionId());
+        temp_transaction_pool.erase(temp_transaction_pool.begin() + transaction_idx);
         if (block_transactions.size() == transaction_pool.size())
             break;
     }
-    transaction_pool.shrink_to_fit();
+    temp_transaction_pool.shrink_to_fit();
 
     string merkle_root_hash = MerkleRootHash(transaction_ids);
 
@@ -249,8 +249,13 @@ bool Blockchain::MineBlock(unsigned long long nonce_target, string miner_name)
         block_transactions[i].SetTimestamp(timestamp);
         block_transactions[i].Confirm();
 
-        transaction_pool.erase(transaction_pool.begin() + transaction_idxs[i]);
+        auto t = std::find_if(std::begin(transaction_pool), std::end(transaction_pool),
+                              [&](Transaction const &t)
+                              { return t.GetTransactionId() == block_transactions[i].GetTransactionId(); });
+        transaction_pool.erase(t);
     }
+
+    transaction_pool.shrink_to_fit();
 
     // Construct a new block
     Block block(current_block_hash, previous_block_hash, merkle_root_hash, miner_name, timestamp, nonce, difficulty_target, BlockCount(), version, block_transactions);
