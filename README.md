@@ -13,7 +13,7 @@
 
 GENUSERS <amount> - generate a specified amount of blockchain users (wallets).
 GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool.
-CREATEBLOCKS - initiate block mining until all transactions are confirmed.
+MINEBLOCKS - initiate block mining until all transactions are confirmed.
 LISTUSERS - list information of all users (wallets) in the blockchain.
 LISTBLOCKTX <block-height> - list all transaction information of a specified block.
 LISTTXPOOL - list all real time transaction ids in the transaction pool.
@@ -31,14 +31,13 @@ RESET - reset blockchain, clearing all of its data.
 Programa leidžia vartotojui susimuliuoti supaprastintą blokų grandinę. Programos galimybės:
 - Vartotojų generavimas
 - Transakcijų generavimas 
-- Blokų kūrimas ir kasimas 
+- Blokų kūrimas ir kasimas lygiagrečiai
 - Betkurio vartotojo informacijos peržiūra
 - Betkurios transakcijos informacijos peržiūra
 - Betkurio bloko informacijos peržiūra
 - Bendra blokų grandinės informacija (vartotojų, blokų, transakcijų skaičius)
 
-Pagal nutylėjimą blokų kasimo sudėtingumas lygus 5, kiekviename bloke telpa iki 100 transakcijų.
+Pagal nutylėjimą blokų kasimo sudėtingumas lygus 5, kiekviename bloke telpa iki 100 transakcijų bei dalyvauja 6 *miner'iai*, kurie "kasa" blokus lygiagrečiai.
+
 
 Blokų grandinės informacija išsaugoma **.txt** failuose **/data** direktorijoje.
-
-

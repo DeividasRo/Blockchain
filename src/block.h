@@ -63,6 +63,12 @@ public:
 
     inline int TransactionCount() const { return transaction_count; };
 
+    // setters
+    inline void SetCurrentBlockHash(string current_block_hash) { this->current_block_hash = current_block_hash; }
+    inline void SetPreviousBlockHash(string previous_block_hash) { this->previous_block_hash = previous_block_hash; }
+    inline void SetMerkelRootHash(string merkel_root_hash) { this->merkel_root_hash = merkel_root_hash; }
+    inline void SetTransactions(std::vector<Transaction> transactions) { this->transactions = transactions; }
+
     // getters
     inline string GetCurrentBlockHash() const { return current_block_hash; }
     inline string GetPreviousBlockHash() const { return previous_block_hash; }
