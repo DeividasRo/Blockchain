@@ -38,8 +38,8 @@ void PrintBlockInfo(Block block)
     std::cout << "Current Block Hash: " << block.GetCurrentBlockHash() << std::endl;
     std::cout << "Previous Block Hash: " << block.GetPreviousBlockHash() << std::endl;
     std::cout << "Merkel Root Hash: " << block.GetMerkelRootHash() << std::endl;
-    std::cout << "Miner: " << block.GetMiner() << std::endl;
     std::cout << "Timestamp: " << TimeStampToHReadable(block.GetTimestamp());
+    std::cout << "Miner: " << block.GetMiner() << std::endl;
     std::cout << "Nonce: " << block.GetNonce() << std::endl;
     std::cout << "Difficulty Target: " << block.GetDifficultyTarget() << std::endl;
     std::cout << "Transaction Count: " << block.TransactionCount() << std::endl;
@@ -267,6 +267,22 @@ int main()
         {
             std::cout << "Currently there are " << blockchain.TransactionPoolCount() << " unconfirmed transactions in the transaction pool." << std::endl;
         }
+        else if (args[0] == "setdiff")
+        {
+            if (argc == 2)
+            {
+                if (!is_number(args[1]))
+                    continue;
+                if (std::stoi(args[1]) < 1 || std::stoi(args[1]) > 63)
+                    continue;
+                blockchain.SetDifficultyTarget(std::stoi(args[1]));
+                std::cout << "Difficulty target changed to " << args[1] << "." << std::endl;
+            }
+            else
+            {
+                std::cout << "Invalid amount of arguments." << std::endl;
+            }
+        }
         else if (args[0] == "reset")
         {
             int status = remove("data/users.txt");
@@ -289,6 +305,7 @@ int main()
             std::cout << "GETUSERCOUNT - display a real time amount of users (wallets) in the blockchain." << std::endl;
             std::cout << "GETBLOCKCOUNT - display a real time amount of blocks in the blockchain." << std::endl;
             std::cout << "GETTXPOOLSIZE - display a real time amount of unconfirmed transactions in the transaction pool." << std::endl;
+            std::cout << "SETDIFF <difficulty> - set difficulty target (1 to 63)." << std::endl;
             std::cout << "RESET - reset blockchain, clearing all of its data." << std::endl;
             std::cout << std::endl;
         }
