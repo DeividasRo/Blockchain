@@ -23,9 +23,10 @@ private:
 public:
     Blockchain() : difficulty_target(4) {}
 
+    void CreateBlocks();
+
     // Mining
-    void CreateBlock();
-    bool MineBlock(unsigned long long nonce_target, string miner_name);
+    void MineBlock(string miner_name, int initial_block_count);
 
     // Generators
     void GenerateUsers(int amount);

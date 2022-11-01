@@ -1,5 +1,5 @@
 #include "blockchain.h"
-#include "helpers.h"
+#include "omp.h"
 
 void PrintAllUsers(std::vector<User> users)
 {
@@ -53,8 +53,9 @@ int main()
     string input;
     int argc;
     std::vector<string> args;
-    Blockchain blockchain;
+    std::vector<string> miners = {"1A", "1B", "1C", "1D", "1E", "1F"};
 
+    Blockchain blockchain;
     blockchain.SetDifficultyTarget(5);
     blockchain.SetVersion(1);
 
@@ -126,19 +127,29 @@ int main()
                 std::cout << "Invalid amount of arguments." << std::endl;
             }
         }
-        else if (args[0] == "createblocks")
+        else if (args[0] == "mineblocks")
         {
             if (blockchain.TransactionPoolCount() > 0)
             {
-                while (blockchain.TransactionPoolCount() > 0)
+                bool p;
+                int tn; // thread number
+                omp_set_num_threads(miners.size());
+#pragma omp parallel private(tn) // parallel region
                 {
-                    blockchain.CreateBlock();
-
-                    PrintBlockInfo(blockchain.GetBlock(blockchain.BlockCount() - 1));
-
-                    blockchain.SaveUsersData();
-                    blockchain.SaveTransactionPoolData();
-                    blockchain.SaveBlocksData();
+                    p = true;
+                    tn = omp_get_thread_num(); // get current thread number
+                    while (blockchain.TransactionPoolCount() > 0)
+                    {
+                        blockchain.MineBlock(miners[tn], blockchain.BlockCount());
+#pragma omp barrier // wait for all threads to finish the task
+#pragma omp single  // execute only on one thread
+                        {
+                            PrintBlockInfo(blockchain.GetBlock(blockchain.BlockCount() - 1));
+                            blockchain.SaveUsersData();
+                            blockchain.SaveTransactionPoolData();
+                            blockchain.SaveBlocksData();
+                        }
+                    }
                 }
             }
             else
@@ -268,7 +279,7 @@ int main()
         {
             std::cout << "GENUSERS <amount> - generate a specified amount of blockchain users (wallets)." << std::endl;
             std::cout << "GENTX <amount> - generate a specified amount of unconfirmed transactions in the transaction pool." << std::endl;
-            std::cout << "CREATEBLOCKS - initiate block mining until all transactions are confirmed." << std::endl;
+            std::cout << "MINEBLOCKS - initiate block mining until all transactions are confirmed." << std::endl;
             std::cout << "LISTUSERS - list information of all users (wallets) in the blockchain." << std::endl;
             std::cout << "LISTBLOCKTX <block-height> - list all transaction information of a specified block." << std::endl;
             std::cout << "LISTTXPOOL - list all real time transaction ids in the transaction pool." << std::endl;
@@ -288,6 +299,3 @@ int main()
     } while (args[0] != "stop");
     return 0;
 }
-
-// Difficulty 6 takes around 4 minutes
-// Difficulty 7 takes around 8 minutes

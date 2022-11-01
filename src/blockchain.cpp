@@ -174,30 +174,14 @@ string MerkleRootHash(std::vector<string> merkle)
     return merkle[0];
 }
 
-void Blockchain::CreateBlock()
+void Blockchain::MineBlock(string miner_name, int initial_block_count)
 {
-    unsigned long long nonce_target = 100000;
-    const int miner_count = 5;
-    while (nonce_target < ULLONG_MAX && nonce_target > 0)
-    {
-        std::vector<string> miners = {"1A", "1B", "1C", "1D", "1E"};
-        for (int i = 0; i < miner_count; i++)
-        {
-            int miner_idx = GenerateIntValue(0, miners.size() - 1);
-            if (MineBlock(nonce_target, miners[miner_idx]))
-                return;
-            miners.erase(miners.begin() + miner_idx);
-        }
-        nonce_target += 100000;
-    }
-    return;
-}
-
-bool Blockchain::MineBlock(unsigned long long nonce_target, string miner_name)
-{
+    // std::cout << miner_name << std::endl;
     std::vector<Transaction> temp_transaction_pool = transaction_pool;
     std::vector<Transaction> block_transactions;
     std::vector<string> transaction_ids;
+
+    // Selecting block transactions
     for (int i = 0; i < 100; i++)
     {
         int transaction_idx = GenerateIntValue(0, temp_transaction_pool.size() - 1);
@@ -221,16 +205,22 @@ bool Blockchain::MineBlock(unsigned long long nonce_target, string miner_name)
 
     string target_substr(difficulty_target, '0');
     string current_block_hash;
-    unsigned int nonce = -1;
+    unsigned long long nonce = -1;
 
     // Mining
     while (current_block_hash.substr(0, difficulty_target) != target_substr)
     {
+        if (initial_block_count != BlockCount()) // Checks if the block was already mined
+            return;
         nonce++;
-        if (nonce > nonce_target)
-            return false;
         current_block_hash = Hash(IntToHexString(version) + previous_block_hash + merkle_root_hash + IntToHexString(timestamp) + IntToHexString(nonce) + IntToHexString(difficulty_target));
+        if (nonce == ULLONG_MAX)
+            nonce = 0;
     }
+
+    // Add an empty block to the blockchain
+    Block block;
+    blocks.push_back(block);
 
     // Complete transactions
     for (int i = 0; i < block_transactions.size(); i++)
@@ -254,14 +244,8 @@ bool Blockchain::MineBlock(unsigned long long nonce_target, string miner_name)
                               { return t.GetTransactionId() == block_transactions[i].GetTransactionId(); });
         transaction_pool.erase(t);
     }
-
     transaction_pool.shrink_to_fit();
 
-    // Construct a new block
-    Block block(current_block_hash, previous_block_hash, merkle_root_hash, miner_name, timestamp, nonce, difficulty_target, BlockCount(), version, block_transactions);
-
-    // And new block to blockchain
-    blocks.push_back(block);
-
-    return true;
+    // Construct the new block added to the blockchain
+    blocks.back() = Block(current_block_hash, previous_block_hash, merkle_root_hash, miner_name, timestamp, nonce, difficulty_target, BlockCount() - 1, version, block_transactions);
 }
