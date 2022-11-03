@@ -24,8 +24,8 @@ GETUSERCOUNT - display a real time amount of users (wallets) in the blockchain.
 GETBLOCKCOUNT - display a real time amount of blocks in the blockchain.
 GETTXPOOLSIZE - display a real time amount of unconfirmed transactions in the transaction pool.
 SETDIFF <difficulty> - set difficulty target (1 to 63).
-QUIT - exit the blockchain simulation.
 RESET - reset blockchain, clearing all of its data.
+QUIT - exit the blockchain simulation.
 ```
 
 ## Programos aprašymas
